@@ -7,6 +7,7 @@
 import os
 from dmrg_helpers.core.dmrg_exceptions import DMRGException
 
+
 def is_empty_line(line):
     """Checks whether a line is empty.
     
@@ -37,6 +38,10 @@ class FileReader(object):
         filename: a string.
             The filename of the estimators file. The file must exist. If you
             pass a relative path it will be made absolute.
+
+        Raises
+        ------
+        DMRGException: if the file does not exist.
         """
         if os.path.exists(filename):
             filename = os.path.abspath(filename)
@@ -101,6 +106,11 @@ class FileReader(object):
         ----------
         line: a string.
             The line you want to extract data from.
+
+        Returns
+        -------
+        splitted_line: a 2-tuple with a string and a float
+            The name of the correlator and its value stored in this line.
         """
         splitted_line = line.split()
         if len(splitted_line) != 2:
@@ -115,6 +125,10 @@ class FileReader(object):
     def extract_meta_from_comments(self):
         """Extracts metadata from the comments in the estimators file.
 
+        Metadata are comment lines that start with '# META'. They are use to
+        store in the file the values of the parameters of the run, for
+        example. You use this function to are read and store in a dictionary
+        the metadata.
         """
         for c in self.comments:
             splitted_line = c.split()
@@ -126,4 +140,3 @@ class FileReader(object):
                 key = splitted_line[0]
                 value = splitted_line[1]
                 self.meta[key] = value
-
