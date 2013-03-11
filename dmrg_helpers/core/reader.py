@@ -4,6 +4,17 @@
 #
 """ A module to read estimator files.
 """
+import os
+from dmrg_helpers.core.dmrg_exceptions import DMRGException
+
+def is_empty_line(line):
+    """Checks whether a line is empty.
+    
+    A line is empty is has only whitespace or consists only of a carriage
+    return.
+
+    """
+    return (line.split == '') or (line in ['\n', '\n\r'])
 
 class FileReader(object):
     """A file reader.
@@ -13,9 +24,10 @@ class FileReader(object):
 
     """
     def __init__(self):
+        super(FileReader, self).__init__()
         self.comments = []
         self.data = []
-        self.meta = []
+        self.meta = {}
 
     def read(self, filename):
         """Reads a file and extracts the data.
@@ -23,11 +35,18 @@ class FileReader(object):
         Parameters
         ----------
         filename: a string.
-            The filename of the estimators file. The file must exists. If you
+            The filename of the estimators file. The file must exist. If you
             pass a relative path it will be made absolute.
         """
-        f = open(filename, 'r')
-        lines = f.readlines()
+        if os.path.exists(filename):
+            filename = os.path.abspath(filename)
+        else:
+            raise DMRGException('File does not exist')
+
+        self.filename = filename
+
+        with  open(filename, 'r') as f:
+            lines = f.readlines()
         for line in lines:
             self.validate_line(line)
 
@@ -39,6 +58,8 @@ class FileReader(object):
         format with the first column being a string with the estimator's name, 
         and the second a double with the estimator's value.
 
+        Empty lines (i.e. having inly whitespaces) are skipped.
+
         If the line has not this structure this function raises. Otherwise the
         contents of the line are added to the proper field.
 
@@ -49,12 +70,15 @@ class FileReader(object):
         """
         if self.is_comment(line):
             self.comments.append(line)
+        elif is_empty_line(line):
+            pass
         else:
             try:
                 tmp = self.extract_data_from_line(line)
                 self.data.append(tmp)
             except:
                 raise DMRGException('Bad line in file')
+        self.extract_meta_from_comments()
 
     def is_comment(self, line):
         """Checks whether a line is a comment
@@ -76,7 +100,7 @@ class FileReader(object):
         Parameters
         ----------
         line: a string.
-            The line you want to exrtract data from.
+            The line you want to extract data from.
         """
         splitted_line = line.split()
         if len(splitted_line) != 2:
@@ -97,7 +121,7 @@ class FileReader(object):
             if "META" in splitted_line:
                 i = splitted_line.index('META')
                 splitted_line = splitted_line[i+1:]
-                if len(splitted_line) < 3:
+                if len(splitted_line) > 2:
                     raise DMRGException('Bad metadata')
                 key = splitted_line[0]
                 value = splitted_line[1]
