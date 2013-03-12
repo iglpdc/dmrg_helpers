@@ -1,0 +1,10 @@
+#
+# Some comments
+# META parameter_1 1.0
+# META parameter_2 a_string
+#
+n_up_0 1.0
+n_up_1 2.0
+n_up_0*n_up_1 3.0
+n_up_1*n_up_2 4.0
+
