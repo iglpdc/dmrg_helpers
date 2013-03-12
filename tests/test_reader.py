@@ -4,7 +4,6 @@
 #
 """ A tests for the reader class
 """
-from nose import with_setup
 from dmrg_helpers.core.reader import FileReader
     
 class TestFileReader(object):
