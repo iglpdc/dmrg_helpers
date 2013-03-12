@@ -22,6 +22,6 @@ def tuple_to_key(t, delimiter=u':'):
     >>> from dmrg_helpers.core.tuple_to_key import tuple_to_key
     >>> tuple = ['a', 'b', 'c']
     >>> print tuple_to_key(tuple)
-    'a:b:c'
+    a:b:c
     '''
     return delimiter.join(t)
