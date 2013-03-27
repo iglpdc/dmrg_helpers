@@ -29,10 +29,10 @@ class SiteFilter(object):
     ['2', 'i', '+', '1']
     >>> site_filter = SiteFilter('i-1')
     >>> print [site_filter.a, site_filter.i, site_filter.pm, site_filter.b]
-    [None', 'i', '-', '1']
+    [None, 'i', '-', '1']
     """
 
-    pattern = r"([0-9]+)\*?([a-z])[([\+|\-])([0-9]+)]?"
+    pattern = r"([0-9]+)?\*?([a-z])?([\+|\-])?([0-9]+)?"
 
     def __init__(self, string):
         """
@@ -46,10 +46,10 @@ class SiteFilter(object):
         if not match:
             raise DMRGException('Not match in site filter')
 
-        self.a = match(0)
-        self.i = match(1)
-        self.pm = match(2)
-        self.b = match(3)
+        self.a = match.group(1)
+        self.i = match.group(2)
+        self.pm = match.group(3)
+        self.b = match.group(4)
 
         if self.is_index_not_ok():
             raise DMRGException('Bad expression for site indexes')
