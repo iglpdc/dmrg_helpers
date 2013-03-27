@@ -19,7 +19,7 @@ def tuple_to_key(t, delimiter=u':'):
 
     Example
     -------
-    >>> from dmrg_helpers.core.tuple_to_key import tuple_to_key
+    >>> from dmrg_helpers.extract.tuple_to_key import tuple_to_key
     >>> tuple = ['a', 'b', 'c']
     >>> print tuple_to_key(tuple)
     a:b:c
