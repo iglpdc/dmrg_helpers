@@ -4,7 +4,7 @@
 #
 """ A tests for the reader class
 """
-from dmrg_helpers.core.reader import FileReader
+from dmrg_helpers.extract.reader import FileReader
     
 class TestFileReader(object):
 

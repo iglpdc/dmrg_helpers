@@ -5,8 +5,8 @@ Description: Test for the database class.
 '''
 import os
 from nose.tools import with_setup
-from dmrg_helpers.core.database import Database
-from dmrg_helpers.core.reader import FileReader
+from dmrg_helpers.extract.database import Database
+from dmrg_helpers.extract.reader import FileReader
 
 def setup_function():
     pass
