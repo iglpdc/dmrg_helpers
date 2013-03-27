@@ -4,10 +4,10 @@ Author: Ivan Gonzalez
 Description: A module to construct a database with estimators.
 '''
 from dmrg_helpers.core.dmrg_exceptions import DMRGException
-from dmrg_helpers.core.tuple_to_key import tuple_to_key
-from dmrg_helpers.core.estimator_name import EstimatorName
-from dmrg_helpers.core.estimator_site import EstimatorSite
-from dmrg_helpers.core.process_estimator_name import process_estimator_name
+from dmrg_helpers.extract.tuple_to_key import tuple_to_key
+from dmrg_helpers.extract.estimator_name import EstimatorName
+from dmrg_helpers.extract.estimator_site import EstimatorSite
+from dmrg_helpers.extract.process_estimator_name import process_estimator_name
 import os
 import sqlite3
 

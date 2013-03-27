@@ -3,7 +3,7 @@ File: estimator_name.py
 Author: Ivan Gonzalez
 Description: A class for estimator names.
 '''
-from dmrg_helpers.core.tuple_to_key import tuple_to_key
+from dmrg_helpers.extract.tuple_to_key import tuple_to_key
 from sqlite3 import register_adapter, register_converter
 
 class EstimatorName(object):
