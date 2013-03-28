@@ -5,6 +5,7 @@ from dmrg_helpers.extract.tuple_to_key import tuple_to_key
 from dmrg_helpers.extract.estimator_name import EstimatorName
 from dmrg_helpers.extract.estimator_site import EstimatorSite
 from dmrg_helpers.extract.process_estimator_name import process_estimator_name
+from dmrg_helpers.extract.reader import FileReader
 import os
 import sqlite3
 
@@ -42,7 +43,7 @@ class Database(object):
         The name of the file that will store the database. It's never 
         overwritten.
     """
-    def __init__(self, filename):
+    def __init__(self, filename=":memory:"):
         super(Database, self).__init__()
         self.filename = filename
         if os.path.exists(filename) and filename != ":memory:":
@@ -59,14 +60,17 @@ class Database(object):
         conn.commit()
         conn.close()
 
-    def insert_data_from_file(self, file_reader):
-        '''Insert into the database the data in `file_reader`.
+    def insert_data_from_file(self, filename):
+        '''Insert into the database the data in `filename`.
 
         Parameters
         ----------
-        file_reader: a FileReader.
-            The data read from an estimators file.
+        filename: a string.
+            The filename of the estimators.dat file to be read. The path can be
+            relative or absolute.
         '''
+        file_reader = FileReader()
+        file_reader.read(filename)
         meta_keys, meta_vals = adapt_meta_data(file_reader)
         self.check_meta_keys(meta_keys)
 
