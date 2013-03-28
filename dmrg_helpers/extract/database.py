@@ -28,8 +28,8 @@ def adapt_meta_data(file_reader):
         The values from the metadata dictionary joined by the ':' delimiter. 
     '''
     sorted_dict = [ (k, file_reader.meta[k]) for k in sorted(file_reader.meta.keys()) ]
-    meta_keys = tuple_to_key([ x[0] for x in sorted_dict ])
-    meta_vals = tuple_to_key([ x[1] for x in sorted_dict ])
+    meta_keys = tuple_to_key(x[0] for x in sorted_dict)
+    meta_vals = tuple_to_key(x[1] for x in sorted_dict)
     return meta_keys, meta_vals
 
 class Database(object):
@@ -118,7 +118,8 @@ class Database(object):
         '''
         n = estimator_name.split('*')
         n = EstimatorName(n)
-        conn = sqlite3.connect(self.filename, detect_types=sqlite3.PARSE_DECLTYPES)
+        conn = sqlite3.connect(self.filename, 
+                               detect_types=sqlite3.PARSE_DECLTYPES)
         c = conn.cursor()
         c.execute('select * from estimators where name = ?', (n,))
         fetched = c.fetchall()
