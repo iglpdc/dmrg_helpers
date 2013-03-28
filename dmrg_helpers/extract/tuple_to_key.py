@@ -1,7 +1,4 @@
-'''
-File: tuple_to_key.py
-Author: Ivan Gonzalez
-Description: A function to build keys for the database.
+'''A function to build keys for the database.
 '''
 def tuple_to_key(t, delimiter=u':'):
     '''Joins the elements of a tuple into a string using delimiter.

@@ -1,8 +1,4 @@
-'''
-File: process_estimator_name.py
-Author: Ivan Gonzalez
-Description: A few functions to check whether the data in the estimator file is
-fine.
+'''A few functions to check whether the data in the estimator file is fine.
 '''
 
 from dmrg_helpers.core.dmrg_exceptions import DMRGException

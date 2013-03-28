@@ -1,7 +1,4 @@
-'''
-File: generate_indexes.py
-Author: Ivan Gonzalez
-Description: A generator to create all possible indexes from a pattern.
+'''A generator to create all possible indexes from a pattern.
 '''
 import re
 from dmrg_helpers.core.dmrg_exceptions import DMRGException

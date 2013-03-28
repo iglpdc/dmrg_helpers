@@ -1,7 +1,4 @@
-'''
-File: database.py
-Author: Ivan Gonzalez
-Description: A module to construct a database with estimators.
+'''A module to construct a database with estimators.
 '''
 from dmrg_helpers.core.dmrg_exceptions import DMRGException
 from dmrg_helpers.extract.tuple_to_key import tuple_to_key

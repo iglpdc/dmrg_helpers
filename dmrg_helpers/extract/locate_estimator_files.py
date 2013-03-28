@@ -1,7 +1,4 @@
-'''
-File: locate_estimator_files.py
-Author: Ivan Gonzalez
-Description: A function to crawl a directory tree looking for files.
+'''A function to crawl a directory tree looking for files.
 '''
 import os
 import fnmatch
