@@ -4,9 +4,9 @@
 class Correlator(object):
     """A class for storing data for correlators once retrieved for a database.
 
-    You use this class to store the result of calling the function get in the
-    Database class. Additionally, you can create new correlators by making
-    linear combinations of other correlators.
+    You use this class to store the result of calling the function
+    get_estimator in the Database class. Additionally, you can create new
+    correlators by making linear combinations of other correlators.
 
     Parameters
     ----------
