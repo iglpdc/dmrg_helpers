@@ -1,7 +1,5 @@
 '''
-File: test_database.py
-Author: Ivan Gonzalez
-Description: Test for the database class.
+Test for the database class.
 '''
 import os
 from nose.tools import with_setup

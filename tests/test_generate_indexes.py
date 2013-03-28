@@ -1,7 +1,5 @@
 '''
-File: test_generate_indexes.py
-Author: Ivan Gonzalez
-Description: Test for generate_indexes module.
+Test for generate_indexes module.
 '''
 from dmrg_helpers.extract.generate_indexes import SiteFilter
 
