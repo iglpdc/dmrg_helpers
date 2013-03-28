@@ -23,8 +23,8 @@ S_{i+1}^{z}`, then you only have to do this:
 
 .. literalinclude:: _static/plot_correlator_from_file.py
 
-The `plot` contains not only the data for the correlator, but also information
-about the Hamiltonian parameters and all that.
+The `correlator` object contains not only the data for the correlator, but also
+information about the Hamiltonian parameters and all that.
 
 The important thing to note is that the 'estimators.dat' file in the examples
 above is the raw file as it comes out from the DMRG run, without any further
