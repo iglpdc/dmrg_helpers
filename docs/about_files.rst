@@ -1,20 +1,20 @@
 About estimators.dat files
 ==========================
 
-In our DMRG code, all the correlation functions calculated in a run of the code
+In our DMRG code, all the correlation functions calculated in a run 
 go to a file, whose name is defaulted to 'estimators.dat'. The format of this
 file is important for all the scripts in this package to work. You only need to
-read this if you what to use this code to process the output of other code,
+read this if you what to use this code to process the output of other code
 that spits correlators in a different way from our DMRG code 
 
 The estimators file are text files. They can have two types of lines: comments
 or data lines. Comments are lines starting by the `#` symbol. In general,
 comments are disregarded by this package, so you can put there whatever you
 want. Nevertheless, there is a special type of comment that contains some data
-that can be used in the analysis, but is not actual correlator data, such as
+that may be used in the analysis, but is not actual correlator data, such as
 the Hamiltonian parameters used to obtain the correlators in the file. These
-special type of comments are called metadata lines. A comment line is a
-metadata line if the first non-blank characters after the `#` symbol are 'META'
+special type of comments are called metadata lines. A comment is a metadata
+line if the first non-blank characters after the `#` symbol are 'META',
 followed by a blank space. Metadata lines are treated in the following way. The
 next two words after the 'META' keyword are read into a dictionary: the first
 one becomes the dictionary's entry key, the second one the dictionary's entry
@@ -31,8 +31,8 @@ An example of metadata comment, which is used to specify the system length is:
     ...
 
 All comment lines, including metadata lines, are optional, so a file without
-them can be still processed by the module. It may be, though, that some
-features are not avaliable.
+them can be still processed. It may be, though, that some features are not
+avaliable.
 
 Data lines have two words separated by blank spaces. The first word is read as
 a string and specifies the name of the correlator. The name of the correlator

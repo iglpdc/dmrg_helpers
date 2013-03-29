@@ -6,15 +6,15 @@
 Welcome to DMRG helpers's documentation!
 ========================================
 
-This is documentation for a Python module used to process, analyze, and plot
-the data resulting from our DMRG code. With this module, you can read a bunch
+This is documentation for a Python package used to process, analyze, and plot
+the data resulting from our DMRG code. With this package, you can read a bunch
 of files with estimator data at once, even if they correspond to different
 Hamiltonian parameters; extract data for a particular correlator or calculate a
 structure factor, and save to a file or plot your data using matplotlib.
 
 For example, to calculate the spin structure factor for certain model, reading
-the data from a file 'estimators.dat' , and saving the spin structure factor to
-another file for plotting, you have to do only this: 
+the data from a file 'estimators.dat', and saving the spin structure factor to
+another file for later plotting, you have to do only this: 
 
 .. literalinclude:: _static/spin_structure_factor_from_file.py
 
