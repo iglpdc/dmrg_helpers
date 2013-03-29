@@ -3,7 +3,7 @@
 import os
 import fnmatch
 
-def locate_estimator_files(root, pattern='estimators.dat'):
+def locate_estimator_files(root, pattern='estimators*.dat'):
     '''Locates all the files named by the pattern in the root directory.
 
     You use this function to crawl a directory tree looking for estimators

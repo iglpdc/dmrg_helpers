@@ -69,5 +69,6 @@ def create_db_from_dir(root_dir, database_name=None, pattern='estimators.dat'):
     A Database object.
     """
     files_found = locate_estimator_files(root_dir, pattern)
-    db = create_db_from_files(files_found)
+    print files_found
+    db = create_db_from_files(files_found, database_name)
     return db
