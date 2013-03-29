@@ -18,6 +18,11 @@ class EstimatorSite(object):
         super(EstimatorSite, self).__init__()
         self.sites = sites
 
+    def x(self):
+        """Returns the first elememt of the tuple as an int.
+        """
+        return int(self.sites[0])
+
 def adapt_estimator_site(estimator_site):
     '''Adapts the estimator site to the database format.
 
