@@ -6,6 +6,7 @@ from dmrg_helpers.extract.estimator_name import EstimatorName
 from dmrg_helpers.extract.estimator_site import EstimatorSite
 from dmrg_helpers.extract.process_estimator_name import process_estimator_name
 from dmrg_helpers.extract.reader import FileReader
+from dmrg_helpers.extract.estimator import Estimator
 import os
 import sqlite3
 
@@ -42,9 +43,11 @@ class Database(object):
     filename: a string.
         The name of the file that will store the database. It's never 
         overwritten.
+    meta_keys: a dict of strings on strings.
+        The meta comments from the file. It has information about the
+        parameters of the Hamiltonian, for example, of the run.
     """
     def __init__(self, filename=":memory:"):
-        super(Database, self).__init__()
         self.filename = filename
         if os.path.exists(filename) and filename != ":memory:":
             raise DMRGException('Cannot create database: file exists already')
@@ -116,6 +119,11 @@ class Database(object):
             The operators acting in each site, in order, and separated by '*'.
         site_expression: a string.
             Not implemented right now.
+
+        Returns
+        -------
+        result: an Estimator object with all the data found for this
+        estimator.
         '''
         n = estimator_name.split('*')
         n = EstimatorName(n)
@@ -125,4 +133,6 @@ class Database(object):
         c.execute('select * from estimators where name = ?', (n,))
         fetched = c.fetchall()
         conn.close()
-        return fetched
+        result = Estimator(estimator_name, self.meta_keys)
+        result.add_fetched_data(fetched)
+        return result
