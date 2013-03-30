@@ -7,10 +7,12 @@ class EstimatorSite(object):
     """A class to store estimator sites into the database.
     
     You use this function to handle estimator sites inside the database.
+    Eventually, the sites will be transformed to ints, but here you don't
+    care.
 
     Parameters
     ----------
-    sites: a tuple of ints.
+    sites: a tuple of strings.
         The sites where the several single-site operators that compose the
         correlator act.
     """
