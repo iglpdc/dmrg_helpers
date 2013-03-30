@@ -31,18 +31,19 @@ def test_generate_filenames():
     fns = n_up.generate_filenames('')
     assert len(fns) == 1
     assert '1.0:a_string' in fns
-    assert fns['1.0:a_string'] == '_parameter_1_1.0_parameter_2_a_string'
+    assert fns['1.0:a_string'] == '_parameter_1_1.0_parameter_2_a_string.dat'
 
 @with_setup(setup_function, teardown_function)
 def test_save():
     db = Database('tests/db_test.sqlite3')
     db.insert_data_from_file('tests/file_one.dat')
     n_up = db.get_estimator('n_up')
-    n_up.save('tests/n_up')
+    n_up.save('n_up', 'tests/')
     contents = '0 1.0\n1 2.0'
-    with open('tests/n_up_parameter_1_1.0_parameter_2_a_string', 'r') as f:
+    with open('tests/n_up_parameter_1_1.0_parameter_2_a_string.dat', 'r') as f:
         from_file = f.read()
     assert from_file == contents
+    os.remove('tests/n_up_parameter_1_1.0_parameter_2_a_string.dat')
 
 #@with_setup(setup_function, teardown_function)
 #def test_database_from_two_point_correlators():

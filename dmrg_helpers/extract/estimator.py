@@ -1,6 +1,7 @@
 '''A class to store estimators once retrieved from the database.
 '''
 import numpy as np
+import os
 from itertools import izip
 from dmrg_helpers.extract.estimator_site import EstimatorSite
 
@@ -11,30 +12,30 @@ class EstimatorData(object):
     
     Parameters
     ----------
-    sites_array: an array of tuples of ints.
+    sites_list: an list of tuples of ints.
         The sites at which each of the single-site operators of the correlator
         act.
-    values_array: an array of doubles.
-        The value of the correlator at each site in the sites_array.
+    values_list: an list of doubles.
+        The value of the correlator at each site in the sites_list.
     """
     def __init__(self):
-        self.sites_array = []
-        self.values_array = []
+        self.sites_list = []
+        self.values_list = []
 
     def add(self, sites, value):
         """Adds data"""
-        self.sites_array.append(sites)
-        self.values_array.append(value)
+        self.sites_list.append(sites)
+        self.values_list.append(value)
 
     def x(self):
         """Returns the first site as an index of the chain in a numpy array.
         """
-        return np.array(map(EstimatorSite.x, self.sites_array), dtype=int)
+        return np.array(map(EstimatorSite.x, self.sites_list), dtype=int)
 
     def y(self):
         """Returns the values as a numpy array.
         """
-        return np.array(self.values_array, dtype=float)
+        return np.array(self.values_list, dtype=float)
 
 class Estimator(object):
     """A class for storing data for estimators once retrieved for a database.
@@ -59,7 +60,8 @@ class Estimator(object):
         Contains the actual values for the estimator. The key in the dictionary 
         is given by the parameters that characterize the data, such as 
         Hamiltonian parameters of the DMRG run or the system length. The value
-        of the dictionaty is given by a EstimatorData object that holds the 
+        of the dictionary is given by a EstimatorData object that holds the 
+        numerical part of the estimator.
     """
     def __init__(self, name, meta_keys):
         self.name = name
@@ -100,11 +102,11 @@ class Estimator(object):
                 self.data[meta_vals] = EstimatorData()
             self.data[meta_vals].add(d[1], d[2])
 
-    def save(self, filename):
+    def save(self, filename, output_dir=os.getcwd()):
         """Saves the correlator data to a file.
 
         You use this function to save data for a correlator to a file. If there 
-        is more that one set of data in the Correlator, for example, becuase 
+        is more that one set of data in the Correlator, for example, because
         you have data for different systems sizes, each set will be saved into
         a different file. The name of these files will be obtained by appending 
         the names and values of the meta_data to `filename`.
@@ -112,9 +114,11 @@ class Estimator(object):
         Inside the file the data is organized in two columns: the first is a 
         site of the chain, and the second the value of the correlator.
         """
+        output_dir = os.path.abspath(output_dir)
         for key, val in self.generate_filenames(filename).iteritems():
             tmp = izip(self.data[key].x(), self.data[key].y())
-            with open(val, 'w') as f:
+            saved = os.path.join(output_dir, val)
+            with open(saved, 'w') as f:
                 f.write('\n'.join('%s %s' % x for x in tmp))
 
     def generate_filenames(self, filename):
@@ -140,6 +144,8 @@ class Estimator(object):
             extended_filename = filename
             for key in sorted(meta_dict.iterkeys()):
                 extended_filename += '_'+str(key)+'_'+str(meta_dict[key])
+            extended_filename += '.dat'
+            print extended_filename
             filenames.append(extended_filename)
         return dict(izip(self.data.keys(), filenames))
 
