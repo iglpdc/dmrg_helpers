@@ -127,7 +127,8 @@ class Estimator(object):
         Parameters
         ----------
         filename: a string.
-            The filename to be created.
+            The filename to be created. If it has a '.dat' extension, the 
+            extension is stripped off.
 
         Returns
         -------
@@ -138,6 +139,8 @@ class Estimator(object):
         ------
         DMRGException if the label is not found in self.keys.
         """
+        if filename[-4:] == '.dat':
+            filename = filename[:-4]
         filenames = []
         for meta_val in self.data.keys():
             meta_dict = self.get_metadata_as_dict(meta_val)
