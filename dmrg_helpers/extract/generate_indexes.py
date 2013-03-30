@@ -1,6 +1,8 @@
 '''A generator to create all possible indexes from a pattern.
 '''
 import re
+from functools import partial
+import types
 from dmrg_helpers.core.dmrg_exceptions import DMRGException
 
 class SiteFilter(object):
@@ -42,29 +44,29 @@ class SiteFilter(object):
         match = re.search(SiteFilter.pattern, string)
         if not match:
             raise DMRGException('Not match in site filter')
-
+        
         self.a = match.group(1)
         self.i = match.group(2)
         self.pm = match.group(3)
         self.b = match.group(4)
 
-        if self.is_index_not_ok():
+        if not self.is_index_ok():
             raise DMRGException('Bad expression for site indexes')
 
-    def is_index_not_ok(self):
+    def is_index_ok(self):
         """Checks whether an index is right.
         """
         not_ok = (self.pm is None and self.b is not None) or (self.i is None
                 and self.pm is not None)
-        return not_ok
+        return not not_ok
 
     def is_constant(self):
         '''Checks whether the expression is just a constant.
         '''
         return self.i is None
         
-    def build_index(self, i):
-        '''Evaluates the (possible) mute indexes in the filter to 'i'.
+    def build_index(self, index):
+        '''Evaluates the (possible) mute indexes in the filter to 'index'.
 
         You use this function to generate the integer, which correspond to site
         in the chain, by evaluating the expression for the filter. Evaluating
@@ -85,7 +87,7 @@ class SiteFilter(object):
         if self.is_constant():
             result = int(self.a)
         else:
-            result = i
+            result = index
             
             if self.a is not None:
                 result *= int(self.a)
@@ -132,19 +134,24 @@ def generate_indexes(site_expressions, number_of_sites):
     Example
     -------
     >>> from dmrg_helpers.extract.generate_indexes import generate_indexes
-    >>> print generate_indexes('2*i+1', 10)
-    [1, 3, 5, 7, 9]
-    >>> print generate_indexes('1', 10)
-    [1]
+    >>> [x for x in generate_indexes('2*i+1', 10)]
+    [[1], [3], [5], [7], [9]]
+    >>> [x for x in generate_indexes('1', 10)]
+    [[1]]
+    >>> [x for x in generate_indexes(['2*i+1', '2*i+2'], 10)]
+    [[1, 2], [3, 4], [5, 6], [7, 8]]
     '''
+    if isinstance(site_expressions, types.StringTypes):
+        site_expressions = [site_expressions]
+         
     site_filters = map(SiteFilter, site_expressions)
-    are_all_filters_constant = map(SiteFilter.is_constant, site_filters)
-    i = 0
-
+    are_all_filters_constant = not(False in
+                                   map(SiteFilter.is_constant, site_filters))
+    
     if are_all_filters_constant:
-        yield map(SiteFilter.build_index(0), site_filters)
+        yield map(partial(SiteFilter.build_index, index=0), site_filters)
     else:
-        sites = map(SiteFilter.build_index(i), site_filters)
-        while sites_are_ok(sites, number_of_sites):
-            yield sites
-            i += 1
+        for i in xrange(number_of_sites):
+            sites = map(partial(SiteFilter.build_index, index=i), site_filters)
+            if sites_are_ok(sites, number_of_sites):
+                yield sites
