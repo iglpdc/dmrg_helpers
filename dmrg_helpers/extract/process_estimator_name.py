@@ -48,7 +48,7 @@ def split_into_name_and_site(operator):
     -------
     name: a string 
         The name of the single-site operator.
-    site: an int.
+    site: a string
         The site where this operator acts.
     """
     splitted = operator.split('_')
@@ -60,9 +60,4 @@ def split_into_name_and_site(operator):
     # separates them
     name = operator[:-(len(site)+1)]
 
-    try:
-        site = int(site)
-    except:
-        raise DMRGException('Bad site number')
-    
     return name, site

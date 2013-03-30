@@ -37,7 +37,7 @@ def adapt_estimator_site(estimator_site):
     -------
     a string in the format to be stored in the database.
     '''
-    return tuple_to_key(unicode(estimator_site.sites))
+    return tuple_to_key(estimator_site.sites)
    
 def convert_estimator_site(s):
     '''Converts back an entry of the database to an EstimatorSite object.
@@ -53,8 +53,8 @@ def convert_estimator_site(s):
     -------
     an EstimatorSite object.
     '''
-    operators = s.split(':')
-    return EstimatorSite(operators)
+    sites = s.split(':')
+    return EstimatorSite(sites)
 
 register_adapter(EstimatorSite, adapt_estimator_site)
 register_converter('estimator_site', convert_estimator_site)

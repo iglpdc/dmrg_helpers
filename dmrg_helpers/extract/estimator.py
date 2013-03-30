@@ -112,9 +112,9 @@ class Estimator(object):
         Inside the file the data is organized in two columns: the first is a 
         site of the chain, and the second the value of the correlator.
         """
-        for fn in self.generate_filenames(filename):
-            tmp = izip(self.data[fn].x(), self.data[fn].y())
-            with open(fn, 'w') as f:
+        for key, val in self.generate_filenames(filename).iteritems():
+            tmp = izip(self.data[key].x(), self.data[key].y())
+            with open(val, 'w') as f:
                 f.write('\n'.join('%s %s' % x for x in tmp))
 
     def generate_filenames(self, filename):
@@ -138,8 +138,8 @@ class Estimator(object):
         for meta_val in self.data.keys():
             meta_dict = self.get_metadata_as_dict(meta_val)
             extended_filename = filename
-            for key, val in meta_dict.values():
-                extended_filename += '_'+str(key)+'_'+str(val)
+            for key in sorted(meta_dict.iterkeys()):
+                extended_filename += '_'+str(key)+'_'+str(meta_dict[key])
             filenames.append(extended_filename)
         return dict(izip(self.data.keys(), filenames))
 
