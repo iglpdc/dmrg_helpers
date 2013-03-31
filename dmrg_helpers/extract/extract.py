@@ -3,7 +3,7 @@
 from dmrg_helpers.extract.database import Database
 from dmrg_helpers.extract.locate_estimator_files import locate_estimator_files
 
-def create_db_from_file(filename, database_name=None):
+def create_db_from_file(filename, database_name=":memory:"):
     """Creates a database with the data extracted for a file.
 
     The file must be an estimators.dat-type file. A new database is created.
@@ -14,7 +14,7 @@ def create_db_from_file(filename, database_name=None):
     filename: a string.
         The filename of the estimators.dat file to be read. The path can be
         relative or absolute.
-    database_name: a string (defaulted to None).
+    database_name: a string (defaulted to ":memory:").
         The name of the file to which the database will be saved.
 
     Returns
@@ -25,7 +25,7 @@ def create_db_from_file(filename, database_name=None):
     db.insert_data_from_file(filename)
     return db
 
-def create_db_from_files(files, database_name=None): 
+def create_db_from_files(files, database_name=":memory:"): 
     """Creates a database with the data extracted for a list fo files.
 
     The file must be an estimators.dat-type file. A new database is created.
@@ -36,7 +36,7 @@ def create_db_from_files(files, database_name=None):
     filename: a list of strings.
         The filenames of the estimators.dat files to be read. The path can be
         relative or absolute.
-    database_name: a string (defaulted to None).
+    database_name: a string (defaulted to ":memory:").
         The name of the file to which the database will be saved.
 
     Returns
@@ -48,7 +48,7 @@ def create_db_from_files(files, database_name=None):
         db.insert_data_from_file(filename)
     return db
 
-def create_db_from_dir(root_dir, database_name=None, pattern='estimators.dat'):
+def create_db_from_dir(root_dir, database_name=":memory:", pattern='estimators.dat'):
     """Creates a database with the data extracted by crawling a dir.
 
     The function crawls down a dir a picks up all the files whose name follows
@@ -61,7 +61,7 @@ def create_db_from_dir(root_dir, database_name=None, pattern='estimators.dat'):
     filename: a list of strings.
         The filenames of the estimators.dat files to be read. The path can be
         relative or absolute.
-    database_name: a string (defaulted to None).
+    database_name: a string (defaulted to ":memory:").
         The name of the file to which the database will be saved.
 
     Returns
