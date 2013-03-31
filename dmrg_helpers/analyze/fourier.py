@@ -33,7 +33,6 @@ def generate_momenta(length):
         The length of the chain you want to generate the momenta for.
 
     """
-    i = 0
-    while i < length:
+    for i in xrange(length):
         yield 2*i*pi/length
 
