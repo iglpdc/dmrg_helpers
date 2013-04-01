@@ -29,3 +29,12 @@ def test_create_db_from_dir():
     assert len(db.get_estimator('n_up')) == 1
     assert len(db.get_estimator('n_down')) == 1
 
+@with_setup(setup_function, teardown_function)
+def test_create_db_from_file_with_real_data():
+    db = ex.create_db_from_file('tests/real_data/static/estimators.dat', 
+                                'tests/db_test.sqlite3')
+    assert len(db.get_estimator('n_up')) == 1
+    assert len(db.get_estimator('s_z*s_z')) == 1
+    assert len(db.get_estimator('s_m_dag*s_m')) == 1
+
+
