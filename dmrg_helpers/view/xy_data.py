@@ -106,7 +106,6 @@ class XYDataDict(object):
         """
         output_dir = os.path.abspath(output_dir)
         for key, val in self.generate_filenames(filename).iteritems():
-            import pdb; pdb.set_trace()
             tmp = izip(self.data[key].x_list, self.data[key].y_list)
             saved = os.path.join(output_dir, val)
             with open(saved, 'w') as f:
