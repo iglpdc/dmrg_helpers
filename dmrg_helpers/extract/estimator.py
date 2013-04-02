@@ -27,6 +27,11 @@ class EstimatorData(object):
         """Adds data"""
         self.sites_list.append(sites)
         self.values_list.append(value)
+    
+    def sites(self):
+        """Returns the sites a list of tuples
+        """
+        return [i.sites for i in self.sites_list]
 
     def x(self):
         """Returns the first site as an index of the chain in a list

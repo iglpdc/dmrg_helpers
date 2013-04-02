@@ -1,7 +1,8 @@
 '''
 Functions to calculate common structure factors.
 '''
-from dmrg_helpers.extract.estimator import Estimator
+from dmrg_helpers.analyze.fourier import (
+    calculate_fourier_transform_for_two_point_estimator)
 
 def calculate_spin_struct_factor(db):
     """Calculates the (full) spin structure factor.
@@ -29,9 +30,7 @@ def calculate_spin_struct_factor(db):
     >>> os.remove('tests/real_data/real_data.sqlite')
     """
     zz_component = db.get_estimator('s_z*s_z')
-
-    meta_keys = zz_component.meta_keys
-    result = Estimator('spin_struct_factor', meta_keys)
-    #result.data = dict(izip(zz_component.data.x(), zz_component.data.y()))
-
+    result = ( 
+        calculate_fourier_transform_for_two_point_estimator(zz_component, 
+                                                            'number_of_sites'))
     return result 

@@ -3,6 +3,7 @@
 import numpy as np
 from math import pi
 from itertools import izip
+from dmrg_helpers.view.xy_data import XYData, XYDataDict
 
 def calculate_fourier_comp_for_two_point_estimator(estimator_data, q):
     """Calculates the Fourier transform for an EstimatorData object.
@@ -18,10 +19,10 @@ def calculate_fourier_comp_for_two_point_estimator(estimator_data, q):
     result: A float with the value of the Fourier component.
 
     """
-    first_site, second_site = zip(*estimator_data.sites) # unzip using zip!
-    diff = np.array(first_site)-np.array(second_site)
-    return 2*np.sum(np.multiply(estimator_data.y_as_np()*np.cos(q*diff)))
-    #return np.sum(np.multiply(estimator_data.y_as_np()*np.exp(1j*q*diff)).real)
+    sites = map(list, zip(*estimator_data.sites())) 
+    diff = np.array(sites[0], dtype=int)-np.array(sites[1], dtype=int)
+    return 2*np.sum(np.multiply(estimator_data.y_as_np(), np.cos(q*diff)))
+    #return np.sum(np.multiply(estimator_data.y_as_np(), np.exp(1j*q*diff)).real)
 
 def generate_momenta(length):
     """Generates the allowed momenta for a system of a given `length`.
@@ -52,9 +53,10 @@ def calculate_fourier_transform_for_two_point_estimator_data(estimator_data,
     Fourier transform.
 
     """
-    return [(x, calculate_fourier_comp_for_two_point_estimator(estimator_data, 
-                                                               x))
-            for x in generate_momenta(length)]
+    return XYData([(x, 
+                    calculate_fourier_comp_for_two_point_estimator(
+                        estimator_data, x))
+            for x in generate_momenta(length)])
 
 def calculate_fourier_transform_for_two_point_estimator(estimator, 
                                                         length_label):
@@ -81,10 +83,11 @@ def calculate_fourier_transform_for_two_point_estimator(estimator,
         else:
             length = get_length_directly_from_data(data)
         fourier_transforms.append(
-                calculate_fourier_transform_for_two_point_estimator(data,
-                                                                    length))
-    return dict(izip(estimator.data.iterkeys, fourier_transforms))
+            calculate_fourier_transform_for_two_point_estimator_data(data,
+                                                                     length))
+    return XYDataDict(estimator.meta_keys, 
+                      dict(izip(estimator.data.iterkeys(), fourier_transforms)))
 
 def get_length_directly_from_data(estimator_data):
-    pass
+    return int(96)
 
