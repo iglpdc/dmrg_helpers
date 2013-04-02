@@ -24,16 +24,6 @@ def test_members():
     assert '1.0:a_string' in n_up.data.keys()
 
 @with_setup(setup_function, teardown_function)
-def test_generate_filenames():
-    db = Database('tests/db_test.sqlite3')
-    db.insert_data_from_file('tests/file_one.dat')
-    n_up = db.get_estimator('n_up')
-    fns = n_up.generate_filenames('')
-    assert len(fns) == 1
-    assert '1.0:a_string' in fns
-    assert fns['1.0:a_string'] == '_parameter_1_1.0_parameter_2_a_string.dat'
-
-@with_setup(setup_function, teardown_function)
 def test_save():
     db = Database('tests/db_test.sqlite3')
     db.insert_data_from_file('tests/file_one.dat')
@@ -44,11 +34,3 @@ def test_save():
         from_file = f.read()
     assert from_file == contents
     os.remove('tests/n_up_parameter_1_1.0_parameter_2_a_string.dat')
-
-#@with_setup(setup_function, teardown_function)
-#def test_database_from_two_point_correlators():
-#    db = Database('tests/db_test.sqlite3')
-#    db.insert_data_from_file('tests/file_two_point_estimators.dat')
-#    assert len(db.get_estimator('n_up')) == 1
-#    assert len(db.get_estimator('n_down')) == 0
-#    assert len(db.get_estimator('n_up*n_up')) == 1

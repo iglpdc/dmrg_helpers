@@ -20,8 +20,8 @@ def calculate_fourier_comp_for_two_point_estimator(estimator_data, q):
     """
     first_site, second_site = zip(*estimator_data.sites) # unzip using zip!
     diff = np.array(first_site)-np.array(second_site)
-    return 2*np.sum(np.multiply(estimator_data.y()*np.cos(q*diff)))
-    #return np.sum(np.multiply(values*np.exp(1j*q*diff)).real)
+    return 2*np.sum(np.multiply(estimator_data.y_as_np()*np.cos(q*diff)))
+    #return np.sum(np.multiply(estimator_data.y_as_np()*np.exp(1j*q*diff)).real)
 
 def generate_momenta(length):
     """Generates the allowed momenta for a system of a given `length`.

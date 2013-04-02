@@ -19,8 +19,8 @@ class XYData(object):
         The value of the correlator at each site in the sites_list.
     """
     def __init__(self, xy_list):
-        self.xy_list
-        self.x, self.y = self.unzip_in_xy()
+        self.xy_list = xy_list
+        self.x_list, self.y_list = self.unzip_in_xy()
     
     @classmethod
     def from_lists(cls, x, y):
@@ -33,17 +33,17 @@ class XYData(object):
         return cls(izip(estimator_data.x(), estimator_data.y()))
 
     def unzip_in_xy(self):
-        return zip(*self.xy_list)
+        return map(list, zip(*self.xy_list))
 
     def x(self):
         """Returns x component in a numpy array.
         """
-        return np.array(self.x)
+        return np.array(self.x_list)
 
     def y(self):
         """Returns y component in a numpy array.
         """
-        return np.array(self.y, dtype=float)
+        return np.array(self.y_list, dtype=float)
 
 class XYDataDict(object):
     """A class for storing data for estimators once retrieved for a database.
@@ -80,7 +80,8 @@ class XYDataDict(object):
     def from_estimator(cls, e):
         return cls(e.meta_keys, 
                    dict(izip(e.data.iterkeys(), 
-                             XYData.from_estimator_data(e.data.itervalues())))) 
+                             map(XYData.from_estimator_data,
+                                 e.data.itervalues())))) 
 
     def get_metadata_as_dict(self, meta_val):
         """Returns a dictionary with metadata.
@@ -105,7 +106,7 @@ class XYDataDict(object):
         """
         output_dir = os.path.abspath(output_dir)
         for key, val in self.generate_filenames(filename).iteritems():
-            tmp = izip(self.data[key].x(), self.data[key].y())
+            tmp = izip(self.data[key].x_list, self.data[key].y_list)
             saved = os.path.join(output_dir, val)
             with open(saved, 'w') as f:
                 f.write('\n'.join('%s %s' % x for x in tmp))

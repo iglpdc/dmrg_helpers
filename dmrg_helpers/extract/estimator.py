@@ -4,6 +4,7 @@ import numpy as np
 import os
 from itertools import izip
 from dmrg_helpers.extract.estimator_site import EstimatorSite
+from dmrg_helpers.view.xy_data import XYDataDict
 
 class EstimatorData(object):
     """An auxiliary class to hold the numerical data from an Estimator.
@@ -28,11 +29,21 @@ class EstimatorData(object):
         self.values_list.append(value)
 
     def x(self):
+        """Returns the first site as an index of the chain in a list
+        """
+        return map(EstimatorSite.x, self.sites_list)
+
+    def x_as_np(self):
         """Returns the first site as an index of the chain in a numpy array.
         """
         return np.array(map(EstimatorSite.x, self.sites_list), dtype=int)
-
+    
     def y(self):
+        """Returns the values as a list.
+        """
+        return self.values_list
+
+    def y_as_np(self):
         """Returns the values as a numpy array.
         """
         return np.array(self.values_list, dtype=float)
@@ -114,54 +125,14 @@ class Estimator(object):
         Inside the file the data is organized in two columns: the first is a 
         site of the chain, and the second the value of the correlator.
         """
-        output_dir = os.path.abspath(output_dir)
-        for key, val in self.generate_filenames(filename).iteritems():
-            tmp = izip(self.data[key].x(), self.data[key].y())
-            saved = os.path.join(output_dir, val)
-            with open(saved, 'w') as f:
-                f.write('\n'.join('%s %s' % x for x in tmp))
+        xy_data_dict = XYDataDict.from_estimator(self)
+        xy_data_dict.save(filename, output_dir)
 
-    def generate_filenames(self, filename):
-        """Generates one filename per entry in data according to `label`.
-
-        Parameters
-        ----------
-        filename: a string.
-            The filename to be created. If it has a '.dat' extension, the 
-            extension is stripped off.
-
-        Returns
-        -------
-        filenames: a list of strings.
-            The result is to append the labels with their values to `filename`.
-
-        Raises
-        ------
-        DMRGException if the label is not found in self.keys.
-        """
-        if filename[-4:] == '.dat':
-            filename = filename[:-4]
-        filenames = []
-        for meta_val in self.data.keys():
-            meta_dict = self.get_metadata_as_dict(meta_val)
-            extended_filename = filename
-            for key in sorted(meta_dict.iterkeys()):
-                extended_filename += '_'+str(key)+'_'+str(meta_dict[key])
-            extended_filename += '.dat'
-            print extended_filename
-            filenames.append(extended_filename)
-        return dict(izip(self.data.keys(), filenames))
-
-    def plot(self, label=None):
+    def plot(self):
         """Plots the data.
 
         Makes a plot of the correlator data. If the correlator contains several
         sets of parameters, graphs all in the same plot.
-
-        Parameters
-        ----------
-        label: a string.
-            You can use it to print a label. The label must be one of the
-            keys for the dictionary of the correlator.
         """
-        pass
+        xy_data_dict = XYDataDict.from_estimator(self)
+        xy_data_dict.plot()
