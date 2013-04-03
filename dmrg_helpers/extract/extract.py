@@ -48,7 +48,8 @@ def create_db_from_files(files, database_name=":memory:"):
         db.insert_data_from_file(filename)
     return db
 
-def create_db_from_dir(root_dir, database_name=":memory:", pattern='estimators.dat'):
+def create_db_from_dir(root_dir, database_name=":memory:", 
+                       pattern='estimators.dat'):
     """Creates a database with the data extracted by crawling a dir.
 
     The function crawls down a dir a picks up all the files whose name follows

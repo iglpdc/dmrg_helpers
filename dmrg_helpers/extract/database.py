@@ -49,19 +49,28 @@ class Database(object):
     """
     def __init__(self, filename=":memory:"):
         self.filename = filename
-        if os.path.exists(filename) and filename != ":memory:":
-            raise DMRGException('Cannot create database: file exists already')
+        if filename != ":memory:":
+            if os.path.exists(filename):
+                raise DMRGException('Cannot create db: file exists already')
         self.meta_keys = None
+
+        self.conn = sqlite3.connect(self.filename, 
+                                    detect_types=sqlite3.PARSE_DECLTYPES)
+        self.c = self.conn.cursor()
         self.create_estimators_table()
+
+    def __del__(self):
+        self.c.close()
+        self.conn.close()
 
     def create_estimators_table(self):
         '''Creates the table for the estimators.
         '''
-        conn = sqlite3.connect(self.filename, detect_types=sqlite3.PARSE_DECLTYPES)
-        c = conn.cursor()
-        c.execute("create table estimators (name estimator_name, sites estimator_site, data real, meta_values text)")
-        conn.commit()
-        conn.close()
+        with self.conn:
+            self.c.execute("create table estimators (name estimator_name, \
+                                                     sites estimator_site, \
+                                                     data real, \
+                                                     meta_values text)")
 
     def insert_data_from_file(self, filename):
         '''Insert into the database the data in `filename`.
@@ -77,17 +86,15 @@ class Database(object):
         meta_keys, meta_vals = adapt_meta_data(file_reader)
         self.check_meta_keys(meta_keys)
 
-        conn = sqlite3.connect(self.filename, detect_types=sqlite3.PARSE_DECLTYPES)
-        c = conn.cursor()
-
-        for line in file_reader.data:
-            n, s = process_estimator_name(line[0])
-            n = EstimatorName(n)
-            s = EstimatorSite(s)
-            d = line[1]
-            c.execute("insert into estimators(name, sites, data, meta_values) values(?,?,?,?)", (n, s, d, meta_vals))
-        conn.commit()
-        conn.close()
+        with self.conn:
+            for line in file_reader.data:
+                n, s = process_estimator_name(line[0])
+                n = EstimatorName(n)
+                s = EstimatorSite(s)
+                d = line[1]
+                self.c.execute("insert into estimators(\
+                     name, sites, data, meta_values) values(?,?,?,?)", 
+                     (n, s, d, meta_vals))
 
     def check_meta_keys(self, meta_keys):
         '''Checks whether the `meta_keys` for the file are alright.
@@ -125,14 +132,9 @@ class Database(object):
         result: an Estimator object with all the data found for this
         estimator.
         '''
-        n = estimator_name.split('*')
-        n = EstimatorName(n)
-        conn = sqlite3.connect(self.filename, 
-                               detect_types=sqlite3.PARSE_DECLTYPES)
-        c = conn.cursor()
-        c.execute('select * from estimators where name = ?', (n,))
-        fetched = c.fetchall()
-        conn.close()
+        n = EstimatorName(estimator_name.split('*'))
+        self.c.execute('select * from estimators where name = ?', (n,))
+        fetched = self.c.fetchall()
         result = Estimator(estimator_name, self.meta_keys)
         result.add_fetched_data(fetched)
         return result
