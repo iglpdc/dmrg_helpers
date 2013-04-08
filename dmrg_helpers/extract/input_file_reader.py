@@ -1,6 +1,7 @@
 """A module to read input files.
 """
 from dmrg_helpers.core.dmrg_exceptions import DMRGException
+from collections import Iterable
 
 class InputFileReader(object):
     """A class to read input file data and extract parameter info.
@@ -25,8 +26,12 @@ class InputFileReader(object):
     #>>> reader.append_data_to_file('estimators_with_data.dat')
     """
     def __init__(self, watched_keywords):
-        self.watched_keywords = []
-        self.watched_keywords.append(watched_keywords)
+        if (isinstance(watched_keywords, Iterable) and 
+                not isinstance(watched_keywords, basestring)):
+            self.watched_keywords = watched_keywords
+        else:
+            self.watched_keywords = []
+            self.watched_keywords.append(watched_keywords)
         self.data = {}
         self.open_keywords = []
 
@@ -41,8 +46,12 @@ class InputFileReader(object):
 
     def close_keyword(self, keyword):
         """Closes a keyword.
+
+        Some keywords have an extra argument after the parameter name when they
+        open, such as '<run n=0>', but the closing statement does not use the
+        extra argument. To allow this, you have to call split.
         """
-        tmp = self.open_keywords.pop()
+        tmp = self.open_keywords.pop().split()[0]
         if keyword != tmp:
             raise DMRGException("Bad input file")
 
@@ -126,4 +135,5 @@ class InputFileReader(object):
         
         with open(filename, 'w') as f:
             f.write('\n'.join(self.get_data_as_metadata()))
+            f.write('\n')
             f.writelines(lines)
