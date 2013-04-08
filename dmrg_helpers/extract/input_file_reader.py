@@ -16,15 +16,13 @@ class InputFileReader(object):
 
     Examples
     --------
-    >>> from dmrg_helpers.extract.input_file_reader import InputFileReader
-    >>> with open('tmp.xml', 'w') as f:
-    ...    f.writelines(['<param>\n', '1.0\n', '</param>'])
-    >>> reader = InputFileReader(['param'])
-    >>> xml_data = reader.read(f.name)
-    >>> xml_data['param']
-    '1.0'
-    >>> import os
-    >>> os.remove('tmp.xml')
+    #>>> from dmrg_helpers.extract.input_file_reader import InputFileReader
+    #>>> # create a temporary input file
+    #>>> with open('tmp.xml', 'w') as f:
+    #...    f.writelines(['<param>\n', '1.0\n', '</param>'])
+    #>>> reader = InputFileReader(['param'])
+    #>>> reader.read(f.name)
+    #>>> reader.append_data_to_file('estimators_with_data.dat')
     """
     def __init__(self, watched_keywords):
         self.watched_keywords = []
@@ -64,6 +62,19 @@ class InputFileReader(object):
 
     def read(self, filename):
         """Reads an input file and extracts the parameters you're watching.
+
+        Examples
+        --------
+        #>>> from dmrg_helpers.extract.input_file_reader import InputFileReader
+        #>>> # create a temporary input file
+        #>>> with open('tmp.xml', 'w') as f:
+        #...    f.writelines(['<param>\n', '1.0\n', '</param>'])
+        #>>> reader = InputFileReader(['param'])
+        #>>> reader.read(f.name)
+        #>>> reader.data['param']
+        #'1.0'
+        #>>> import os
+        #>>> os.remove('tmp.xml')
         """
         opened_keyword = ''
         with open(filename, 'r') as f:
@@ -84,4 +95,35 @@ class InputFileReader(object):
         for k in self.watched_keywords:
             if k not in self.data.keys():
                 raise DMRGException("Missing keyword")
-        return self.data
+
+    def get_data_as_metadata(self):
+        """Get the dictionary with parameters and values as a formatted string.
+
+        The metadata has to follow some format to be read by the FileReader
+        class. Specifically, metadata lines start with '# META ', followed by
+        the parameter name and value, separated by a whitespace.
+        """
+        metadata = []
+        for k, v in self.data.iteritems():
+            metadata.append('# META ' + str(k) + ' ' + str(v))
+        return metadata
+
+    def append_data_to_file(self, filename):
+        """Appends the data to the file using the proper format for metadata.
+        """
+        with open(filename, 'a') as f:
+            f.write('\n'.join(self.get_data_as_metadata()))
+
+    def prepend_data_to_file(self, filename):
+        """Prepends the data to the file using the proper format for metadata.
+
+        This is slower than appending, as you have to read the whole file,
+        keep it in memory, rewrite it starting with the metadata and then
+        append the old stuff you read.
+        """
+        with open(filename, 'r') as f:
+            lines = f.readlines()
+        
+        with open(filename, 'w') as f:
+            f.write('\n'.join(self.get_data_as_metadata()))
+            f.writelines(lines)
