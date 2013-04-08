@@ -17,18 +17,18 @@ class InputFileReader(object):
     Examples
     --------
     >>> from dmrg_helpers.extract.input_file_reader import InputFileReader
-    >>> from tempfile import NamedTemporaryFile
-    >>> f = NamedTemporaryFile()
-    >>> f.writelines(['<param>', '1.0', '</param>'])
-    >>> reader = InputFileReader('param')
+    >>> with open('tmp.xml', 'w') as f:
+    ...    f.writelines(['<param>\n', '1.0\n', '</param>'])
+    >>> reader = InputFileReader(['param'])
     >>> xml_data = reader.read(f.name)
     >>> xml_data['param']
     '1.0'
-    >>> f.close()
+    >>> import os
+    >>> os.remove('tmp.xml')
     """
     def __init__(self, watched_keywords):
-        super(InputFileReader, self).__init__()
-        self.watched_keywords = watched_keywords
+        self.watched_keywords = []
+        self.watched_keywords.append(watched_keywords)
         self.data = {}
         self.open_keywords = []
 
@@ -36,22 +36,23 @@ class InputFileReader(object):
     def get_keyword(cls, line):
         """Strips the XML stuff for the line and gets the parameter name.
         """
-        word = line.strip()[1:-2]
+        word = line.strip()[1:-1]
         if word.startswith("/"):
             word = word[1:]
         return word
 
-    def close_keyword(self, line):
+    def close_keyword(self, keyword):
         """Closes a keyword.
         """
-        keyword = self.open_keywords.pop()
-        if keyword != InputFileReader.get_keyword(line):
+        tmp = self.open_keywords.pop()
+        if keyword != tmp:
             raise DMRGException("Bad input file")
 
-    def open_keyword(self, line):
+    def open_keyword(self, keyword):
         """Opens a keyword.
         """
-        return self.open_keyword[-1]
+        self.open_keywords.append(keyword)
+        return self.open_keywords[-1]
 
     def set_value(self, keyword, value):
         """Sets a value for an open keyword.
@@ -66,19 +67,21 @@ class InputFileReader(object):
         """
         opened_keyword = ''
         with open(filename, 'r') as f:
-            lines = f.read()
+            lines = f.readlines()
+        import pdb; pdb.set_trace()
         for line in lines:
             line = line.strip() # get blanks off
             if line.startswith("<"):
+                keyword = InputFileReader.get_keyword(line)
                 if line.startswith("/", 1):
-                    self.close_keyword(InputFileReader.get_keyword(line))
+                    self.close_keyword(keyword)
                 else:
-                    opened_keyword = self.open_keyword(
-                                         InputFileReader.get_keyword(line))
+                    opened_keyword = self.open_keyword(keyword)
             else:
                 if opened_keyword in self.watched_keywords:
                     self.set_value(opened_keyword, line)
 
-        if self.watched_keywords != self.data.keys():
-            raise DMRGException("Missing keyword")
+        for k in self.watched_keywords:
+            if k not in self.data.keys():
+                raise DMRGException("Missing keyword")
         return self.data
