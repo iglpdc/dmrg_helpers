@@ -2,6 +2,7 @@
 '''
 import os
 import fnmatch
+from dmrg_helpers.core.dmrg_logging import logger 
 
 def locate_estimator_files(root, pattern='estimators*.dat'):
     '''Locates all the files named by the pattern in the root directory.
@@ -23,7 +24,9 @@ def locate_estimator_files(root, pattern='estimators*.dat'):
         The absolute paths for all the files found in a list.
     '''
     files_found = []
+    logger.info('Searching for {0} files in {1}'.format(pattern, root))
     for path, dirs, files in os.walk(os.path.abspath(root)):
         for filename in fnmatch.filter(files, pattern):
             files_found.append(os.path.join(path, filename))
+            logger.info('Found file {0}'.format(files_found[-1]))
     return files_found

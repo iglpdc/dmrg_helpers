@@ -2,6 +2,7 @@
 '''
 from dmrg_helpers.extract.database import Database
 from dmrg_helpers.extract.locate_estimator_files import locate_estimator_files
+from dmrg_helpers.core.dmrg_logging import logger 
 
 def create_db_from_file(filename, database_name=":memory:"):
     """Creates a database with the data extracted for a file.
@@ -23,6 +24,8 @@ def create_db_from_file(filename, database_name=":memory:"):
     """
     db = Database(database_name)
     db.insert_data_from_file(filename)
+    logger.info('File {0} inserted in database {1}'.format(filename,
+                                                           database_name))
     return db
 
 def create_db_from_files(files, database_name=":memory:"): 
@@ -70,6 +73,5 @@ def create_db_from_dir(root_dir, database_name=":memory:",
     A Database object.
     """
     files_found = locate_estimator_files(root_dir, pattern)
-    print files_found
     db = create_db_from_files(files_found, database_name)
     return db

@@ -1,6 +1,7 @@
 '''A module to construct a database with estimators.
 '''
 from dmrg_helpers.core.dmrg_exceptions import DMRGException
+from dmrg_helpers.core.dmrg_logging import logger
 from dmrg_helpers.extract.tuple_to_key import tuple_to_key
 from dmrg_helpers.extract.estimator import Estimator
 from dmrg_helpers.extract.estimator_name import EstimatorName
@@ -58,6 +59,7 @@ class Database(object):
                                     detect_types=sqlite3.PARSE_DECLTYPES)
         self.c = self.conn.cursor()
         self.create_estimators_table()
+        logger.info('Creating database {}'.format(filename))
 
     def __del__(self):
         self.c.close()

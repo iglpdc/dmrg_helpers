@@ -1,6 +1,7 @@
 """A module to read input files.
 """
 from dmrg_helpers.core.dmrg_exceptions import DMRGException
+from dmrg_helpers.core.dmrg_logging import logger
 from collections import Iterable
 
 class InputFileReader(object):
@@ -103,6 +104,7 @@ class InputFileReader(object):
         for k in self.watched_keywords:
             if k not in self.data.keys():
                 raise DMRGException("Missing keyword")
+        logger.info('Reading metadata from input file {0}'.format(filename))
 
     def get_data_as_metadata(self):
         """Get the dictionary with parameters and values as a formatted string.
@@ -121,6 +123,7 @@ class InputFileReader(object):
         """
         with open(filename, 'a') as f:
             f.write('\n'.join(self.get_data_as_metadata()))
+        logger.info('Metadata appended to {0}'.format(filename))
 
     def prepend_data_to_file(self, filename):
         """Prepends the data to the file using the proper format for metadata.
@@ -136,3 +139,4 @@ class InputFileReader(object):
             f.write('\n'.join(self.get_data_as_metadata()))
             f.write('\n')
             f.writelines(lines)
+        logger.info('Metadata prepended to {0}'.format(filename))

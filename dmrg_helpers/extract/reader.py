@@ -6,6 +6,7 @@
 """
 import os
 from dmrg_helpers.core.dmrg_exceptions import DMRGException
+from dmrg_helpers.core.dmrg_logging import logger 
 
 def is_empty_line(line):
     """Checks whether a line is empty.
@@ -53,6 +54,8 @@ class FileReader(object):
             lines = f.readlines()
         for line in lines:
             self.validate_line(line)
+
+        logger.info('File {0} has been read'.format(filename))
 
     def validate_line(self, line):
         """Checks whether a line is OK, and if so gets its data.
