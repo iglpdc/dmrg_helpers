@@ -56,7 +56,7 @@ def calculate_fourier_transform_for_two_point_estimator_data(estimator_data,
     return XYData([(x, 
                     calculate_fourier_comp_for_two_point_estimator(
                         estimator_data, x)/length)
-            for x in generate_momenta(length)])
+                    for x in generate_momenta(length)])
 
 def calculate_fourier_transform_for_two_point_estimator(estimator, 
                                                         length_label):

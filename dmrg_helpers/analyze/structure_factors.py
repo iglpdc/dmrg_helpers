@@ -1,5 +1,4 @@
-'''
-Functions to calculate common structure factors.
+'''Functions to calculate common structure factors.
 '''
 import numpy as np
 from dmrg_helpers.analyze.fourier import (
@@ -29,7 +28,7 @@ def calculate_spin_struct_factor(db):
     zz_component = db.get_estimator('s_z*s_z')
     result = ( 
         calculate_fourier_transform_for_two_point_estimator(zz_component, 
-                                                            'number_of_sites'))
+                                                            'numberOfSites'))
     return result 
 
 def calculate_density_struct_factor(db):
@@ -63,5 +62,5 @@ def calculate_density_struct_factor(db):
         val.values_list = tmp.tolist()
     result = ( 
         calculate_fourier_transform_for_two_point_estimator(fluctuations, 
-                                                            'number_of_sites'))
+                                                            'numberOfSites'))
     return result 
