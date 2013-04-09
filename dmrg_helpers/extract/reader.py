@@ -7,7 +7,6 @@
 import os
 from dmrg_helpers.core.dmrg_exceptions import DMRGException
 
-
 def is_empty_line(line):
     """Checks whether a line is empty.
     

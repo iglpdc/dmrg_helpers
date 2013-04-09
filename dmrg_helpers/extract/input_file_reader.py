@@ -88,7 +88,6 @@ class InputFileReader(object):
         opened_keyword = ''
         with open(filename, 'r') as f:
             lines = f.readlines()
-        import pdb; pdb.set_trace()
         for line in lines:
             line = line.strip() # get blanks off
             if line.startswith("<"):
