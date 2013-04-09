@@ -4,6 +4,7 @@ import numpy as np
 import os
 from itertools import izip
 from dmrg_helpers.core.dmrg_exceptions import DMRGException
+from dmrg_helpers.core.dmrg_logging import logger
 
 class XYData(object):
     """An auxiliary class to hold the numerical data from an Estimator.
@@ -110,6 +111,7 @@ class XYDataDict(object):
             saved = os.path.join(output_dir, val)
             with open(saved, 'w') as f:
                 f.write('\n'.join('%s %s' % x for x in tmp))
+            logger.info('Saving correlator to {}'.format(filename))
 
     def generate_filenames(self, filename):
         """Generates one filename per entry in data according to `label`.
