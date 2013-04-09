@@ -36,5 +36,3 @@ def test_create_db_from_file_with_real_data():
     assert len(db.get_estimator('n_up')) == 1
     assert len(db.get_estimator('s_z*s_z')) == 1
     assert len(db.get_estimator('s_m_dag*s_m')) == 1
-
-
