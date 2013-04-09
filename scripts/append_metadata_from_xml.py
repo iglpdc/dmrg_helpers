@@ -29,9 +29,15 @@ Options:
   --dir=DIR         Ouput directory [default: ./]
 
 """
+import os
+# Temporary patch to avoid installing the dmrg_helpers package.
+import inspect
+import sys
+script_full_path = os.path.abspath(inspect.getfile(inspect.currentframe()))
+sys.path.insert(0, os.path.dirname(os.path.dirname(script_full_path)))
+# patch ends
 from dmrg_helpers.extract.input_file_reader import InputFileReader
 from dmrg_helpers.extract.locate_estimator_files import locate_estimator_files
-import os
 from itertools import izip
 from docopt import docopt
 
@@ -43,14 +49,14 @@ def parent_dir_of_parent_dir(filename):
 
 def main(args):
     estimator_files = locate_estimator_files(args['--dir'])
-    input_files = [os.path.join(parent_dir_of_parent_dir(f), 'input.xml')
+    input_files = [os.path.join(parent_dir_of_parent_dir(f), 'input.log')
                 for f in estimator_files]
     keys_to_watch = ['t', 'tp', 'U', 'J1', 'J2', 'Kring', 'numberOfSites']
 
     for pair in izip(estimator_files, input_files):
         reader = InputFileReader(keys_to_watch)
-        reader.read(pair[0])
-        reader.prepend_data_to_file(pair[1])
+        reader.read(pair[1])
+        reader.prepend_data_to_file(pair[0])
 
 if __name__ == '__main__':
     args = docopt(__doc__, version = 0.1)
