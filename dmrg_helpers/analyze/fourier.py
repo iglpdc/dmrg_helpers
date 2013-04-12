@@ -79,7 +79,7 @@ def calculate_fourier_transform_for_two_point_estimator(estimator,
     fourier_transforms = []
     for key, data in estimator.data.iteritems():
         if length_label in estimator.keys:
-            length = data.get_metadata_as_dict(key)
+            length = int(estimator.get_metadata_as_dict(key)[length_label])
         else:
             length = get_length_directly_from_data(data)
         fourier_transforms.append(

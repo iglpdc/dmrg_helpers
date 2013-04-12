@@ -1,6 +1,7 @@
 '''A class to store estimators once retrieved from the database.
 '''
 import numpy as np
+import pickle
 import os
 from itertools import izip
 from dmrg_helpers.core.dmrg_exceptions import DMRGException
@@ -90,10 +91,35 @@ class XYDataDict(object):
         Parameters
         ----------
         meta_val: one of the meta_vals.
+
         """
         return dict(izip(self.keys, meta_val.split(':'))) 
-
+    
     def save(self, filename, output_dir=os.getcwd()):
+        """Saves the correlator data to a file.
+
+        You use this function to save data for a correlator to a file using
+        pickle. The correlator can be restored later using the load method.
+
+        """
+        output_dir = os.path.abspath(output_dir)
+        pickle.dump(self, open(os.path.join(output_dir, filename), "wb"))
+        logger.info('Saving correlator to {} as pickle.'.format(filename))
+
+    @classmethod
+    def load(cls, filename, output_dir=os.getcwd()):
+        """Loads the correlator data from a file.
+
+        You use this function to load data for a correlator tthat was
+        previously pickled to a file.
+
+        """
+        output_dir = os.path.abspath(output_dir)
+        restored = pickle.load(open(os.path.join(output_dir, filename), "rb"))
+        logger.info('Loading correlator from {}.'.format(filename))
+        return restored
+
+    def save_as_txt(self, filename, output_dir=os.getcwd()):
         """Saves the correlator data to a file.
 
         You use this function to save data for a correlator to a file. If there 
@@ -104,6 +130,7 @@ class XYDataDict(object):
 
         Inside the file the data is organized in two columns: the first is a 
         site of the chain, and the second the value of the correlator.
+
         """
         output_dir = os.path.abspath(output_dir)
         for key, val in self.generate_filenames(filename).iteritems():
@@ -111,7 +138,7 @@ class XYDataDict(object):
             saved = os.path.join(output_dir, val)
             with open(saved, 'w') as f:
                 f.write('\n'.join('%s %s' % x for x in tmp))
-            logger.info('Saving correlator to {}'.format(filename))
+            logger.info('Saving correlator to {} as txt'.format(filename))
 
     def generate_filenames(self, filename):
         """Generates one filename per entry in data according to `label`.
@@ -142,6 +169,60 @@ class XYDataDict(object):
             extended_filename += '.dat'
             filenames.append(extended_filename)
         return dict(izip(self.data.keys(), filenames))
+    
+    def get_min_y(self):
+        """Returns the minimum value of all 'y' data.
+
+        Returns
+        -------
+        a float
+
+        """
+        tmp = []
+        for v in self.data.itervalues():
+            tmp.append(min(v.y()))
+        return min(tmp)
+
+    def get_max_y(self):
+        """Returns the maximum value of all 'y' data.
+
+        Returns
+        -------
+        a float
+
+        """
+        tmp = []
+        for v in self.data.itervalues():
+            tmp.append(max(v.y()))
+        return max(tmp)
+
+    def get_data_for_plots(self, function_to_make_labels):
+        """Makes a dictionary with the stuff you need to plot.
+
+        You use this function to get x, y values for plotting. You also get a
+        string to label the plots.
+
+        You can get estimators from calling the `get_estimator` function on the
+        Database class, or as the result of calling the functions that calculate
+        structure factors.
+
+        Parameters
+        ----------
+        function_to_make_labels: a function which takes an XYDataDict.
+            This function must return a dictionary with the same keys as the
+            `data` member and the values as strings.
+
+        Returns
+        -------
+        A dictionary with the same keys as the estimator and a three-tuple as
+        values. The tuple contains :math:`K/t`, x and y for the estimator data.
+
+        """
+        labels = function_to_make_labels(self)
+        tmp = []
+        for k, v in self.data.iteritems():
+            tmp.append((labels[k], v.x(), v.y()))
+        return dict(izip(self.data.iterkeys(), tmp))
 
     def plot(self):
         """Plots the data.
