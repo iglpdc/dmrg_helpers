@@ -105,8 +105,7 @@ def calculate_K_over_t(estimator):
         k_over_t.append(tmp)
     return dict(izip(estimator.data.iterkeys(), k_over_t))
 
-def plot_structure_factor(structure_factor, k_fs, y_label, max_plots,
-                          selected_keys, K_over_t_crit=None):
+def plot_structure_factor(structure_factor, k_fs, y_label):
     """Pretty plots the structure factor.
     """
     # Make the figure nice
@@ -129,57 +128,11 @@ def plot_structure_factor(structure_factor, k_fs, y_label, max_plots,
     # Get the data and plot
 
     data = structure_factor.get_data_for_plots(calculate_K_over_t)
-    if not selected_keys:
-        selected_keys = select_plot_based_to_avoid_cluttering(data, max_plots, 
-                                                              K_over_t_crit)
-    data = { key[1]: data[key[1]] for key in selected_keys }
+    
     for d in data.itervalues():
         ax.plot(d[1], d[2]-d[2][0], 'b-')
 
     return fig
-
-def select_plot_based_to_avoid_cluttering(data, max_plots, K_over_t_crit):
-    """Picks up some of the :math:`K/t` values guaranteing certain spacing.
-
-    You use this function to select which values of :math:`K/t` you want to
-    plot. The values are selected by guaranteing that the distance between
-    intercepts of the plots and a vertical axis is at least `sep`. 
-
-    The smallest, highest and critical values are always included.
-
-    Parameters
-    ----------
-    data: a XYDataDict.
-        The whole data you want to plot.
-    max_plots:
-        The maximum number of selected plots. The actual number can be smaller.
-    K_over_t_crit: a string.
-        The value of critical value of :math:`K/t`.
-
-    Returns
-    -------
-    A sublist of the data.keys() with the selected plots.
-
-    """
-    mid_x_axis = len(data[data.keys()[0]][1])/2  # Terrible!
-    vals_at_mid_x_axis = { k: v[2][mid_x_axis] for k, v in data.iteritems() }
-    if K_over_t_crit is not None:
-        transition = vals_at_mid_x_axis[K_over_t_crit]
-    else:
-        transition = None
-    all = sorted([(b, a) for a, b in vals_at_mid_x_axis.iteritems()])
-    sep = (all[-1][0] - all[0][0]) / max_plots
-    selected = [ all[0] ]
-    for item in all:
-        if (item[0] > selected[-1][0] + sep and 
-            item[0] < all[-1][0] - sep):
-                if transition is not None:
-                    if abs(item[0] - transition) > sep:
-                        selected.append(item)
-                else:
-                        selected.append(item)
-
-    return selected
 
 def main(args):
 
@@ -226,22 +179,14 @@ def main(args):
 
     # Plot the structure factors
     
-    selected_keys = []
     y_label = r'$\langle \vec{S}_{q}\cdot\vec{S}_{-q}\rangle$'
-    spin_struct_plot = plot_structure_factor(spin_struct_factor, k_fs, y_label,
-                                             20, selected_keys)
-    print selected_keys
-    logging.info('Selected K/t to plot: {}'.format([k[0] for k in
-                  selected_keys]))
+    spin_struct_plot = plot_structure_factor(spin_struct_factor, k_fs, y_label)
     f = os.path.join(os.path.abspath(output_dir), 'spin_struct_factor.pdf')
     spin_struct_plot.savefig(f)
-    selected_keys = []
+    
     y_label = r'$\langle \delta n_{q}\delta n_{-q}\rangle$'
     charge_struct_plot = plot_structure_factor(charge_struct_factor, k_fs, 
-                                               y_label, 20, selected_keys)
-    print selected_keys
-    logging.info('Selected K/t to plot: {}'.format([k[0] for k in
-                  selected_keys]))
+                                               y_label)
     f = os.path.join(os.path.abspath(output_dir), 'charge_struct_factor.pdf')
     charge_struct_plot.savefig(f)
 
