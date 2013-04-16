@@ -110,9 +110,11 @@ def plot_structure_factor(structure_factor, k_fs, y_label):
     """
     # Make the figure nice
     fig = plt.figure()
-    ax = fig.add_subplot(111)
+    #ax = fig.add_subplot(111)
+    ax = plt.axes(aps['axes'])
     ax.set_xlabel(r'$q$')
     ax.set_ylabel(y_label)
+    ax.yaxis.set_label_coords(-0.08, 0.5)
     ax.set_xlim((0.0, math.pi))
     ax.set_xticks([0.0, math.pi/2, math.pi, (k_fs[2] - k_fs[1]) % math.pi, 
                    (k_fs[0] - k_fs[3]) % math.pi, 
@@ -125,14 +127,61 @@ def plot_structure_factor(structure_factor, k_fs, y_label):
     #ax.set_yticks([min_y, max_y])
     ax.set_yticklabels(['0', "{0:.2f}".format(max_y-min_y)])
     ax.set_ylim([0.0, 1.1 * (max_y - min_y)]);
+
+    # Setting up a colormap that's a simple transtion
+    mymap = mpl.colors.LinearSegmentedColormap.from_list('mycolors', 
+                                                         ['blue', 'red'])
+    sm = plt.cm.ScalarMappable(cmap=mymap, norm=plt.normalize(vmin=0, vmax=1))
+    sm._A = []
+
     # Get the data and plot
 
     data = structure_factor.get_data_for_plots(calculate_K_over_t)
-    
-    for d in data.itervalues():
-        ax.plot(d[1], d[2]-d[2][0], 'b-')
+    colors = assign_colors_from_labels(data)
+    print colors
+   
+    i = 0
+    for k, v in data.iteritems():
+        try:
+            the_color = colors[k]
+        except KeyError:
+            the_color = (0, 1, 0)
+        print k, the_color
+        if i % 10 == 0:
+            ax.plot(v[1], v[2]-v[2][0], color = the_color, lw=0.5 )
+        i += 1
+
+    plt.text(0.2, 0.3, '0.8', fontsize=6)
+    #plt.colorbar(sm)
 
     return fig
+
+def assign_colors_from_labels(data_for_plot):
+    tmp = []
+    keys = []
+    for k, v in data_for_plot.iteritems():
+        try:
+            tmp.append(1/float(v[0]))
+            keys.append(k)
+        except ValueError:
+            pass
+        except ZeroDivisionError:
+            pass
+    max_k_over_t = max(tmp)
+    min_k_over_t = min(tmp)
+    
+    colors = []
+    for k in tmp:
+        g = 2*(float(k)-min_k_over_t)/(max_k_over_t-min_k_over_t)
+        b = 1 - g
+        r = 0
+        if g > 1.0:
+            r = 0
+            g = 1
+            b = 0
+        colors.append((r, g, b))
+
+    return dict(izip(keys, colors))
 
 def main(args):
 
@@ -188,6 +237,7 @@ def main(args):
     charge_struct_plot = plot_structure_factor(charge_struct_factor, k_fs, 
                                                y_label)
     f = os.path.join(os.path.abspath(output_dir), 'charge_struct_factor.pdf')
+    #charge_struct_plot.tight_layout()
     charge_struct_plot.savefig(f)
 
 if __name__ == '__main__':
