@@ -28,7 +28,7 @@ def test_save():
     db = Database('tests/db_test.sqlite3')
     db.insert_data_from_file('tests/file_one.dat')
     n_up = db.get_estimator('n_up')
-    n_up.save('n_up', 'tests/')
+    n_up.save_as_txt('n_up', 'tests/')
     contents = '0 1.0\n1 2.0'
     with open('tests/n_up_parameter_1_1.0_parameter_2_a_string.dat', 'r') as f:
         from_file = f.read()

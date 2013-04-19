@@ -127,11 +127,24 @@ class Estimator(object):
         a different file. The name of these files will be obtained by appending 
         the names and values of the meta_data to `filename`.
 
+        """
+        xy_data_dict = XYDataDict.from_estimator(self)
+        xy_data_dict.save(filename, output_dir)
+
+    def save_as_txt(self, filename, output_dir=os.getcwd()):
+        """Saves the correlator data to a file.
+
+        You use this function to save data for a correlator to a file. If there 
+        is more that one set of data in the Correlator, for example, because
+        you have data for different systems sizes, each set will be saved into
+        a different file. The name of these files will be obtained by appending 
+        the names and values of the meta_data to `filename`.
+
         Inside the file the data is organized in two columns: the first is a 
         site of the chain, and the second the value of the correlator.
         """
         xy_data_dict = XYDataDict.from_estimator(self)
-        xy_data_dict.save(filename, output_dir)
+        xy_data_dict.save_as_txt(filename, output_dir)
 
     def plot(self):
         """Plots the data.
