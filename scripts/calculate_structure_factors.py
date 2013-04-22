@@ -46,7 +46,7 @@ from dmrg_helpers.view.matplotlib_APS_rc_params import aps
 mpl.rcParams.update(aps['params'])
 
 # Band structure calculations for the system of free fermions
-# ----------------------------------------------------------
+# -----------------------------------------------------------
 # 
 # These are a few functions to help you determine the band structure and the 
 # chemical potential at half-filling.
@@ -78,6 +78,7 @@ def find_fermi_momenta_at_half_filling(dispersion, k_max, k_min,
                                       number_of_sites)
     return find_fermi_momenta(mu, dispersion, number_of_sites)
 
+
 def calculate_K_over_t(estimator):
     """Calculates the value of :math:`K/t` for an estimator.
 
@@ -105,7 +106,7 @@ def calculate_K_over_t(estimator):
         k_over_t.append(tmp)
     return dict(izip(estimator.data.iterkeys(), k_over_t))
 
-def plot_structure_factor(structure_factor, k_fs, y_label):
+def plot_structure_factor(structure_factor, k_fs, y_label, selected_keys=None):
     """Pretty plots the structure factor.
     """
     # Make the figure nice
@@ -128,60 +129,18 @@ def plot_structure_factor(structure_factor, k_fs, y_label):
     ax.set_yticklabels(['0', "{0:.2f}".format(max_y-min_y)])
     ax.set_ylim([0.0, 1.1 * (max_y - min_y)]);
 
-    # Setting up a colormap that's a simple transtion
-    mymap = mpl.colors.LinearSegmentedColormap.from_list('mycolors', 
-                                                         ['blue', 'red'])
-    sm = plt.cm.ScalarMappable(cmap=mymap, norm=plt.normalize(vmin=0, vmax=1))
-    sm._A = []
-
     # Get the data and plot
 
     data = structure_factor.get_data_for_plots(calculate_K_over_t)
-    colors = assign_colors_from_labels(data)
-    print colors
    
-    i = 0
     for k, v in data.iteritems():
-        try:
-            the_color = colors[k]
-        except KeyError:
-            the_color = (0, 1, 0)
-        print k, the_color
-        if i % 10 == 0:
-            ax.plot(v[1], v[2]-v[2][0], color = the_color, lw=0.5 )
-        i += 1
-
-    plt.text(0.2, 0.3, '0.8', fontsize=6)
-    #plt.colorbar(sm)
+        if selected_keys is not None:
+            if k not in selected_keys:
+                pass
+        else:
+            ax.plot(v[1], v[2]-v[2][0], lw=0.5 )
 
     return fig
-
-def assign_colors_from_labels(data_for_plot):
-    tmp = []
-    keys = []
-    for k, v in data_for_plot.iteritems():
-        try:
-            tmp.append(1/float(v[0]))
-            keys.append(k)
-        except ValueError:
-            pass
-        except ZeroDivisionError:
-            pass
-    max_k_over_t = max(tmp)
-    min_k_over_t = min(tmp)
-    
-    colors = []
-    for k in tmp:
-        g = 2*(float(k)-min_k_over_t)/(max_k_over_t-min_k_over_t)
-        b = 1 - g
-        r = 0
-        if g > 1.0:
-            r = 0
-            g = 1
-            b = 0
-        colors.append((r, g, b))
-
-    return dict(izip(keys, colors))
 
 def main(args):
 
@@ -208,7 +167,7 @@ def main(args):
         def two_bands(k, t_p=0.75):
             return -2*math.cos(k)-2*t_p*math.cos(2*k)
 
-        # hard_code shit
+        # hard-coded shit
         number_of_sites = 96
         k_max = math.acos(-1.0/3)
         k_min = 0.0
