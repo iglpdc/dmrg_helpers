@@ -17,6 +17,9 @@ install:
 # github.
 #
 .PHONY: test requires doc api-doc dist clean
+test_dev: 
+	nosetests tests
+
 test: 
 	nosetests tests
 	nosetests --with-doctest --doctest-options='+ELLIPSIS'
