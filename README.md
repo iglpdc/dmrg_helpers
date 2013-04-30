@@ -12,6 +12,9 @@ The python code here can be used to analyze and plot the data from DMRG
 Installation
 ------------
 
+See the docs at docs/_build/html/index.html
+
 Usage
 -----
 
+See the docs at docs/_build/html/index.html
